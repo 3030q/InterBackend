@@ -1,13 +1,11 @@
-package com.midjava.internaft.internaftbackend;
+package ru.internaft.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InternaftBackendApplication {
-
+public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(InternaftBackendApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
-
 }
