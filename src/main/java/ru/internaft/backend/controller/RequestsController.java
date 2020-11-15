@@ -40,31 +40,6 @@ public class RequestsController {
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
-    @PostMapping("/auth")
-    public ResponseEntity<JsonNode> auth(@RequestBody JsonNode requestJson)
-    {
-        String login = requestJson.path("email").asText(null);
-        String password = requestJson.path("password").asText(null);
-
-        ObjectNode response = jsonNodeFactory.objectNode();
-
-        if (login == null || password == null) {
-            response.put("status", "expected login and password");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-
-        Optional<LoginData> loginDataRecord = loginsDataRepository.findById(login);
-
-        if (!loginDataRecord.isPresent() || !loginDataRecord.get().getPassword().equals(password)) {
-            response.put("status", "incorrect login or password");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-
-        // TODO: generate token
-        response.put("token", "1234");
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
     @PostMapping("/sign-up")
     public ResponseEntity<JsonNode> signUp(@RequestBody JsonNode requestJson) {
         String login = requestJson.path("email").asText(null);
@@ -84,6 +59,12 @@ public class RequestsController {
             response.put("status", "email already in use");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+
+        LoginData newUser = new LoginData();
+        newUser.setLogin(login);
+        newUser.setPassword((bCryptPasswordEncoder.encode(password)));
+        newUser.setId(123456);
+        loginsDataRepository.saveAndFlush(newUser);
 
         // TODO: generate token
         response.put("token", "1234");

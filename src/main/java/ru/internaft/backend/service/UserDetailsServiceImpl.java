@@ -13,7 +13,7 @@ import java.util.Collections;
 
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private LoginsDataRepository loginsDataRepository;
+    private final LoginsDataRepository loginsDataRepository;
 
     public UserDetailsServiceImpl(LoginsDataRepository loginsDataRepository) {
         this.loginsDataRepository = loginsDataRepository;
