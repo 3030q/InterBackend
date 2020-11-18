@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data @ToString
 public class UserData {
     @Id @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "full_name")
