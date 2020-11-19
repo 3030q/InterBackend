@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +24,7 @@ import java.util.Optional;
 
 @RestController
 public class RequestsController {
+    private int idIncrement = 0;
     private final LoginsDataRepository loginsDataRepository;
     private final UsersDataRepository usersDataRepository;
     private final TokensDataRepository tokensDataRepository;
@@ -44,48 +43,7 @@ public class RequestsController {
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
-    //Возвращает логин (email)
-    public String getCurrentUser() {
-        return (String) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<JsonNode> signUp(@RequestBody JsonNode requestJson) {
-        String login = requestJson.path("email").asText(null);
-        String password = requestJson.path("password").asText(null);
-        String fullName = requestJson.path("name").asText(null);
-
-        ObjectNode response = jsonNodeFactory.objectNode();
-
-        if (login == null || password == null || fullName == null) {
-            response.put("status", "expected email, login and password");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-
-        Optional<LoginData> loginDataRecord = loginsDataRepository.findById(login);
-
-        if (loginDataRecord.isPresent()) {
-            response.put("status", "email already in use");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-
-        LoginData newUser = new LoginData();
-        newUser.setLogin(login);
-        newUser.setPassword((bCryptPasswordEncoder.encode(password)));
-        newUser.setId(123456);
-        loginsDataRepository.saveAndFlush(newUser);
-
-        // TODO: generate token
-        response.put("token", "1234");
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-    @GetMapping("/h")
-    public String h(){
-        return getCurrentUser();
-    }
     @PostMapping("/user")
     public ResponseEntity<JsonNode> getUserData(@RequestBody JsonNode requestJson) {
         String token = requestJson.path("token").asText(null);

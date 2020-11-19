@@ -27,5 +27,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         return new User(user.getLogin(), user.getPassword(), Collections.emptyList());
     }
+
+    public LoginData findByLogin(String string){
+        return loginsDataRepository.findByLogin(string);
+    }
 }
 
