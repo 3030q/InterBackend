@@ -39,9 +39,6 @@ public class RegisterController {
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
-    //Возвращает логин (email)
-
-
     @PostMapping("/sign-up")
     public ResponseEntity<JsonNode> signUp(@RequestBody JsonNode requestJson) {
         String login = requestJson.path("email").asText(null);

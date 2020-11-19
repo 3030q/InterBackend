@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.internaft.backend.repository.LoginsDataRepository;
 
-@RestController //только для тестов
+//Класс для вспомогательных методов
+@RestController
 public class UtilityController {
 
     private final LoginsDataRepository loginsDataRepository;
@@ -13,7 +14,7 @@ public class UtilityController {
     public UtilityController(LoginsDataRepository loginsDataRepository) {
         this.loginsDataRepository = loginsDataRepository;
     }
-
+    //Возвращает Id текущего пользователя
     public Integer getCurrentUserId() {
         String loginCurrentUser = (String) SecurityContextHolder
                 .getContext()
