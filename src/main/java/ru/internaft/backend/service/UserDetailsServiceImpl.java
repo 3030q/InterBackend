@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.internaft.backend.entity.LoginData;
+import ru.internaft.backend.entity.UserData;
 import ru.internaft.backend.repository.LoginsDataRepository;
 
 import java.util.Collections;
