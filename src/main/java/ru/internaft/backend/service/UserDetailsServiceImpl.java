@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.internaft.backend.entity.LoginData;
+import ru.internaft.backend.entity.UserData;
 import ru.internaft.backend.repository.LoginsDataRepository;
 
 import java.util.Collections;
@@ -26,6 +27,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(login);
         }
         return new User(user.getLogin(), user.getPassword(), Collections.emptyList());
+    }
+
+    public LoginData findByLogin(String string){
+        return loginsDataRepository.findByLogin(string);
     }
 }
 
