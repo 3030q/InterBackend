@@ -28,8 +28,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //            "/swagger-ui.html",
 //            "/webjars/**",
 //            "/sign-up",
-            "/auth",
-            "/user"
+            "/auth"
 
             // TODO: default values from guide above. Look at them and remove if needed
     };

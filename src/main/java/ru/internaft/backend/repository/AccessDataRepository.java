@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface AccessDataRepository extends JpaRepository<AccessData, Integer> {
     AccessData findByEmail(String string);
     AccessData findById(int id);
+    Integer deleteByEmail(String string);
 }

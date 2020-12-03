@@ -44,7 +44,7 @@ public class RequestsController {
     }
 
 
-    @PostMapping("/user")
+    /*@PostMapping("/user")
     public ResponseEntity<JsonNode> getUserData(@RequestBody JsonNode requestJson) {
         String token = requestJson.path("token").asText(null);
         Integer userId = requestJson.path("user_id").asInt(0);
@@ -58,7 +58,7 @@ public class RequestsController {
 
         Optional<TokenData> tokenDataRecord = tokensDataRepository.findById(token);
 
-        if (!tokenDataRecord.isPresent()) {
+        if (!tokenDataRecord.isZPresent()) {
             response.put("status", "incorrect token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
@@ -76,5 +76,5 @@ public class RequestsController {
 
         response.put("incorrect return data", "write me! 1234");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+    }*/
 }

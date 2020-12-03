@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data @ToString
 public class AccessData {
         @Id
-        @Column(name = "access_data")
+        @Column(name = "access_data_id")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Integer id;
         // email
