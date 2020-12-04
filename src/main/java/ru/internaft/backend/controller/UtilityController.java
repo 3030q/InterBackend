@@ -1,26 +1,26 @@
 package ru.internaft.backend.controller;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.internaft.backend.Roles;
-import ru.internaft.backend.entity.UserData;
-import ru.internaft.backend.repository.LoginsDataRepository;
-import ru.internaft.backend.repository.UsersDataRepository;
-import ru.internaft.backend.service.UserDetailsServiceImpl;
+import ru.internaft.backend.service.LoginDataService;
+import ru.internaft.backend.service.UserDataService;
 
 //Класс для вспомогательных методов
 @RestController
 public class UtilityController {
 
-    private final UsersDataRepository usersDataRepository;
-    private final LoginsDataRepository loginsDataRepository;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDataService userDataService;
 
-    public UtilityController(UsersDataRepository usersDataRepository, LoginsDataRepository loginsDataRepository, UserDetailsServiceImpl userDetailsService) {
-        this.usersDataRepository = usersDataRepository;
-        this.loginsDataRepository = loginsDataRepository;
-        this.userDetailsService = userDetailsService;
+    public UtilityController(UserDataService userDataService) {
+        this.userDataService = userDataService;
+    }
+
+    public Integer getCurrentUserId() {
+        String loginCurrentUser = (String) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        return userDataService.findByEmail(loginCurrentUser).getId();
     }
 
     //Возвращает Id текущего пользователя

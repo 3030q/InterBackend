@@ -5,12 +5,14 @@ import lombok.ToString;
 import ru.internaft.backend.Roles;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity @Table(name = "user_data")
 @Data @ToString
 public class UserData {
 
-    @Id @Column(name = "user_id")
+    @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -28,4 +30,14 @@ public class UserData {
 
     @OneToOne(mappedBy = "userData")
     private LoginData loginData;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "avatar_id", referencedColumnName = "file_id")
+    private FileData avatarData;
+
+    @OneToOne(mappedBy = "internId")
+    private MentorshipData mentorshipDataForIntern;
+
+    @OneToMany(mappedBy="mentorId")
+    private List<MentorshipData> mentorshipDataForMentor;
 }
