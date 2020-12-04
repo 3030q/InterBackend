@@ -1,3 +1,4 @@
 .idea
 target
 backend.iml
+src/main/resources/application.properties
