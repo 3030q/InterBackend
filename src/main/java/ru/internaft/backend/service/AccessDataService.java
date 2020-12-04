@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.internaft.backend.controller.UtilityController;
 import ru.internaft.backend.entity.AccessData;
@@ -37,7 +36,7 @@ public class AccessDataService {
         return accessDataRepository.findById(id);
     }
 
-    public Integer deleteByEmail(String string){
+    public Integer deleteByEmail(String string) {
         return accessDataRepository.deleteByEmail(string);
     }
 
@@ -50,8 +49,7 @@ public class AccessDataService {
             response.put("status", "expected email, login and password");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        UserData userData =userDataService.findById(utilityController.getCurrentUserId()).  get();
-
+        UserData userData = userDataService.findById(utilityController.getCurrentUserId()).get();
 
         AccessData accessDataRecord = accessDataRepository.findByEmail(email);
 

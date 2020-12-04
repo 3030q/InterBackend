@@ -17,7 +17,7 @@ public class AccessController {
     }
 
     @PostMapping("/adduser")
-    public ResponseEntity<JsonNode> addingUser(@RequestBody JsonNode requestJson){
+    public ResponseEntity<JsonNode> addingUser(@RequestBody JsonNode requestJson) {
         return accessDataService.addUser(requestJson);
     }
 }

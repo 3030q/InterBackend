@@ -9,6 +9,8 @@ import java.util.Optional;
 @Repository
 public interface FileDataRepository extends JpaRepository<FileData, Integer> {
     Optional<FileData> findById(Integer id);
+
     FileData findByPath(String string);
+
     void deleteById(Integer id);
 }

@@ -7,7 +7,8 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "file_data")
-@Data @ToString
+@Data
+@ToString
 public class FileData {
     @Id
     @Column(name = "file_id")

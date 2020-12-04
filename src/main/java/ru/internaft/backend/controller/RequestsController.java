@@ -1,25 +1,12 @@
 package ru.internaft.backend.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.internaft.backend.entity.LoginData;
-import ru.internaft.backend.entity.TokenData;
-import ru.internaft.backend.entity.UserData;
 import ru.internaft.backend.repository.LoginsDataRepository;
 import ru.internaft.backend.repository.TokensDataRepository;
 import ru.internaft.backend.repository.UsersDataRepository;
-
-import java.util.Optional;
 
 
 @RestController
@@ -42,7 +29,6 @@ public class RequestsController {
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
-
 
     /*@PostMapping("/user")
     public ResponseEntity<JsonNode> getUserData(@RequestBody JsonNode requestJson) {

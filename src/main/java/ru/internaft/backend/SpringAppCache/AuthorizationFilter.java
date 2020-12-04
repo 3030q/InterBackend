@@ -45,5 +45,3 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
         return null;
     }
 }
-
-

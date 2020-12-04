@@ -17,21 +17,22 @@ public class MentorshipController {
     }
 
     @PostMapping("/makelink")
-    public ResponseEntity<JsonNode> makeLink(@RequestBody JsonNode requestJson){
+    public ResponseEntity<JsonNode> makeLink(@RequestBody JsonNode requestJson) {
         return mentorshipDataService.makeLink(requestJson);
     }
 
     @PostMapping("/deletelink")
-    public ResponseEntity<JsonNode> deleteLink(@RequestBody JsonNode requestJson){
+    public ResponseEntity<JsonNode> deleteLink(@RequestBody JsonNode requestJson) {
         return mentorshipDataService.deleteLink(requestJson);
     }
+
     @PostMapping("/users")
-    public ResponseEntity<JsonNode> takeAllLink(@RequestBody JsonNode requestJson){
+    public ResponseEntity<JsonNode> takeAllLink(@RequestBody JsonNode requestJson) {
         return mentorshipDataService.takeAllUsers(requestJson);
     }
 
     @GetMapping("/withoutmentor")
-    public ResponseEntity<JsonNode> intersWithoutMentor(){
+    public ResponseEntity<JsonNode> intersWithoutMentor() {
         return mentorshipDataService.internsWithoutMentor();
     }
 }

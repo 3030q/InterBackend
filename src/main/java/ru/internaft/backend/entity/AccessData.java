@@ -2,23 +2,23 @@ package ru.internaft.backend.entity;
 
 import lombok.Data;
 import lombok.ToString;
-import ru.internaft.backend.Roles;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "access_data")
-@Data @ToString
+@Data
+@ToString
 public class AccessData {
-        @Id
-        @Column(name = "access_data_id")
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Integer id;
-        // email
-        @Column(name = "email")
-        private String email;
+    @Id
+    @Column(name = "access_data_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    // email
+    @Column(name = "email")
+    private String email;
 
-        @Column(name ="role")
-        private String role;
+    @Column(name = "role")
+    private String role;
 
 }

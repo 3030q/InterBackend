@@ -5,7 +5,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@Entity @Table(name = "mentorship_data")
+@Entity
+@Table(name = "mentorship_data")
 @Data
 @ToString
 public class MentorshipData {
@@ -13,13 +14,12 @@ public class MentorshipData {
     @Column(name = "mentorship_id")
     private int id;
 
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "mentorship_intern_id", referencedColumnName = "user_id")
     private UserData internId;
 
     @ManyToOne
-    @JoinColumn(name="mentorship_mentor_id", nullable=false)
+    @JoinColumn(name = "mentorship_mentor_id", nullable = false)
     private UserData mentorId;
 
 }

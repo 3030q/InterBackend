@@ -2,13 +2,14 @@ package ru.internaft.backend.entity;
 
 import lombok.Data;
 import lombok.ToString;
-import ru.internaft.backend.Roles;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity @Table(name = "user_data")
-@Data @ToString
+@Entity
+@Table(name = "user_data")
+@Data
+@ToString
 public class UserData {
 
     @Id
@@ -38,6 +39,6 @@ public class UserData {
     @OneToOne(mappedBy = "internId")
     private MentorshipData mentorshipDataForIntern;
 
-    @OneToMany(mappedBy="mentorId")
+    @OneToMany(mappedBy = "mentorId")
     private List<MentorshipData> mentorshipDataForMentor;
 }

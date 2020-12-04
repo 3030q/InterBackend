@@ -14,7 +14,6 @@ import ru.internaft.backend.entity.UserData;
 import ru.internaft.backend.repository.MentorshipDataRepository;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,13 +31,13 @@ public class MentorshipDataService {
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
-    public ResponseEntity<JsonNode> makeLink(JsonNode requestJson){
+    public ResponseEntity<JsonNode> makeLink(JsonNode requestJson) {
         ObjectNode response = jsonNodeFactory.objectNode();
         //defaultvalue = -1 потому что не нашел как null вставить, если найдешь варик зарефактори
         int interId = requestJson.path("intern").asInt(-1);
         int idCurrentUser = new UtilityController(userDataService).getCurrentUserId();
         UserData currentUser = userDataService.findById(idCurrentUser).get();
-        if(!currentUser.getRole().equals("MENTOR")){
+        if (!currentUser.getRole().equals("MENTOR")) {
             response.put("status", "access denied");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -46,16 +45,16 @@ public class MentorshipDataService {
         mentorshipData.setInternId(userDataService.findById(interId).get());
         mentorshipData.setMentorId(userDataService.findById(idCurrentUser).get());
         mentorshipDataRepository.saveAndFlush(mentorshipData);
-        response.put("status","alright");
+        response.put("status", "alright");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Transactional
-    public ResponseEntity<JsonNode> deleteLink(JsonNode requestJson){
+    public ResponseEntity<JsonNode> deleteLink(JsonNode requestJson) {
         ObjectNode responce = jsonNodeFactory.objectNode();
         Integer internId = requestJson.path("intern").asInt(-1);
         UserData currentUser = userDataService.findById(new UtilityController(userDataService).getCurrentUserId()).get();
-        if(!currentUser.getRole().equals("ADMIN")) {
+        if (!currentUser.getRole().equals("ADMIN")) {
             responce.put("status", "access denied");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responce);
         }
@@ -64,15 +63,15 @@ public class MentorshipDataService {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responce);
     }
 
-    public ResponseEntity<JsonNode> takeAllUsers(JsonNode requestJson){
+    public ResponseEntity<JsonNode> takeAllUsers(JsonNode requestJson) {
         ObjectNode response = jsonNodeFactory.objectNode();
         Integer userId = requestJson.path("user_id").asInt(-1);
         UserData currentUser = userDataService.findById(new UtilityController(userDataService).getCurrentUserId()).get();
-        if (currentUser.getRole().equals("INTERN")){
+        if (currentUser.getRole().equals("INTERN")) {
             int mentorId = mentorshipDataRepository.findByInternId_Id(currentUser.getId()).getMentorId().getId();
-            response.put("links", mentorId) ;
+            response.put("links", mentorId);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        }else if (currentUser.getRole().equals("MENTOR")){
+        } else if (currentUser.getRole().equals("MENTOR")) {
             List<MentorshipData> mentorshipData = mentorshipDataRepository.findAllByMentorId_Id(currentUser.getId());
 
             /*Здесь почему-то responce.putArray не принимает обычный массив,
@@ -80,17 +79,17 @@ public class MentorshipDataService {
             в arrayNode
              */
             List<Integer> allLink = new ArrayList<Integer>();
-            for(MentorshipData e:mentorshipData){
+            for (MentorshipData e : mentorshipData) {
                 allLink.add(e.getInternId().getId());
             }
             ArrayNode arrayNode = new ObjectMapper().valueToTree(allLink.toArray());
             response.putArray("interns").addAll(arrayNode);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        }else if(currentUser.getRole().equals("ADMIN")){
+        } else if (currentUser.getRole().equals("ADMIN")) {
             List<MentorshipData> mentorshipData = mentorshipDataRepository.findAll();
             List<Integer> intern = new ArrayList<Integer>();
             Set<Integer> mentor = new HashSet<Integer>();
-            for(MentorshipData e:mentorshipData){
+            for (MentorshipData e : mentorshipData) {
                 intern.add(e.getInternId().getId());
                 mentor.add(e.getMentorId().getId());
             }
@@ -99,23 +98,23 @@ public class MentorshipDataService {
             response.putArray("interns").addAll(arrayNode1);
             response.putArray("mentors").addAll(arrayNode2);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } else{
+        } else {
             response.put("status", "bad_request");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
-    public ResponseEntity<JsonNode> internsWithoutMentor(){
+    public ResponseEntity<JsonNode> internsWithoutMentor() {
         UserData currentUser = userDataService.findById(new UtilityController(userDataService).getCurrentUserId()).get();
         ObjectNode response = jsonNodeFactory.objectNode();
-        if(currentUser.getRole().equals("INTERN")){
-          response.put("status", "access denied");
-          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        if (currentUser.getRole().equals("INTERN")) {
+            response.put("status", "access denied");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         List<UserData> allIntern = userDataService.findAllByRole("INTERN");
         List<Integer> internsIdWithoutMentor = new ArrayList<>();
-        for(UserData e : allIntern){
-            if(mentorshipDataRepository.findByInternId_Id(e.getId())==null){
+        for (UserData e : allIntern) {
+            if (mentorshipDataRepository.findByInternId_Id(e.getId()) == null) {
                 internsIdWithoutMentor.add(e.getId());
             }
         }

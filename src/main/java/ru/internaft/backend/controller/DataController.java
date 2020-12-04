@@ -4,19 +4,14 @@ package ru.internaft.backend.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.io.IOUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import ru.internaft.backend.service.FileDataService;
 import ru.internaft.backend.service.UserDataService;
 
 import javax.servlet.ServletContext;
 import java.io.IOException;
-import java.io.InputStream;
 
 @RestController
 public class DataController {

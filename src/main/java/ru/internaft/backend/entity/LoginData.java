@@ -5,8 +5,10 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@Entity @Table(name = "login_data")
-@Data @ToString
+@Entity
+@Table(name = "login_data")
+@Data
+@ToString
 public class LoginData {
     @Id
     @Column(name = "login")

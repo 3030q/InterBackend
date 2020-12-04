@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface UsersDataRepository extends JpaRepository<UserData, Integer> {
     UserData findByEmail(String string);
+
     Optional<UserData> findById(Integer id);
+
     List<UserData> findAllByRole(String role);
 }

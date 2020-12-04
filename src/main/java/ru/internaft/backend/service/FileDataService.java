@@ -60,9 +60,9 @@ public class FileDataService {
         //TODO: подумать как лучше айдишник вытаскивать
         //Да! ГОвНо код и что ты мне сделаешь?
         UserData userData = userDataService.findById(id).get();
-        if (userData.getAvatarData()  != null) {
+        if (userData.getAvatarData() != null) {
             FileData fileDataActualUser = fileDataRepository.findById(userData.getAvatarData().getId()).get();
-            Files.deleteIfExists(Paths.get(uploadDir+File.separator+fileDataActualUser.getPath()));
+            Files.deleteIfExists(Paths.get(uploadDir + File.separator + fileDataActualUser.getPath()));
             fileDataActualUser.setPath(shortPath);
 
             fileDataRepository.saveAndFlush(fileDataActualUser);
@@ -74,9 +74,10 @@ public class FileDataService {
             usersDataRepository.saveAndFlush(userData);
         }
         ObjectNode response = jsonNodeFactory.objectNode();
-        response.put("status","alright");
+        response.put("status", "alright");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
     public byte[] getImage(JsonNode requestJson) throws IOException {
         int user_id = requestJson.path("user_id").asInt(-1);
         InputStream in = getClass().getResourceAsStream("/file/" + userDataService

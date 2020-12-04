@@ -2,7 +2,6 @@ package ru.internaft.backend.controller;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
-import ru.internaft.backend.service.LoginDataService;
 import ru.internaft.backend.service.UserDataService;
 
 //Класс для вспомогательных методов
