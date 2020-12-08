@@ -18,7 +18,7 @@ public class FileController {
         this.fileDataService = fileDataService;
     }
 
-    @PostMapping("/uploadavatar")
+    @PostMapping("/upload-avatar")
     public ResponseEntity<ObjectNode> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         return fileDataService.uploadFile(file);
     }

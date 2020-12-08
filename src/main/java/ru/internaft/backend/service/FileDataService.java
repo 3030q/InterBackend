@@ -43,6 +43,7 @@ public class FileDataService {
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
+    // TODO: добавить поле с названием файлов
     public ResponseEntity<ObjectNode> uploadFile(MultipartFile file) throws IOException {
         UtilityController utilityController = new UtilityController(userDataService);
         int id = utilityController.getCurrentUserId();

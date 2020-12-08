@@ -67,40 +67,43 @@ public class MentorshipDataService {
         ObjectNode response = jsonNodeFactory.objectNode();
         Integer userId = requestJson.path("user_id").asInt(-1);
         UserData currentUser = userDataService.findById(new UtilityController(userDataService).getCurrentUserId()).get();
-        if (currentUser.getRole().equals("INTERN")) {
-            int mentorId = mentorshipDataRepository.findByInternId_Id(currentUser.getId()).getMentorId().getId();
-            response.put("links", mentorId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } else if (currentUser.getRole().equals("MENTOR")) {
-            List<MentorshipData> mentorshipData = mentorshipDataRepository.findAllByMentorId_Id(currentUser.getId());
+        switch (currentUser.getRole()) {
+            case "INTERN":
+                int mentorId = mentorshipDataRepository.findByInternId_Id(currentUser.getId()).getMentorId().getId();
+                response.put("links", mentorId);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            case "MENTOR": {
+                List<MentorshipData> mentorshipData = mentorshipDataRepository.findAllByMentorId_Id(currentUser.getId());
 
             /*Здесь почему-то responce.putArray не принимает обычный массив,
             пришлось конвертнуть через objectMapper(взято со StackOverflow)
             в arrayNode
              */
-            List<Integer> allLink = new ArrayList<Integer>();
-            for (MentorshipData e : mentorshipData) {
-                allLink.add(e.getInternId().getId());
+                List<Integer> allLink = new ArrayList<Integer>();
+                for (MentorshipData e : mentorshipData) {
+                    allLink.add(e.getInternId().getId());
+                }
+                ArrayNode arrayNode = new ObjectMapper().valueToTree(allLink.toArray());
+                response.putArray("interns").addAll(arrayNode);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }
-            ArrayNode arrayNode = new ObjectMapper().valueToTree(allLink.toArray());
-            response.putArray("interns").addAll(arrayNode);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } else if (currentUser.getRole().equals("ADMIN")) {
-            List<MentorshipData> mentorshipData = mentorshipDataRepository.findAll();
-            List<Integer> intern = new ArrayList<Integer>();
-            Set<Integer> mentor = new HashSet<Integer>();
-            for (MentorshipData e : mentorshipData) {
-                intern.add(e.getInternId().getId());
-                mentor.add(e.getMentorId().getId());
+            case "ADMIN": {
+                List<MentorshipData> mentorshipData = mentorshipDataRepository.findAll();
+                List<Integer> intern = new ArrayList<Integer>();
+                Set<Integer> mentor = new HashSet<Integer>();
+                for (MentorshipData e : mentorshipData) {
+                    intern.add(e.getInternId().getId());
+                    mentor.add(e.getMentorId().getId());
+                }
+                ArrayNode arrayNode1 = new ObjectMapper().valueToTree(intern.toArray());
+                ArrayNode arrayNode2 = new ObjectMapper().valueToTree(mentor.toArray());
+                response.putArray("interns").addAll(arrayNode1);
+                response.putArray("mentors").addAll(arrayNode2);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }
-            ArrayNode arrayNode1 = new ObjectMapper().valueToTree(intern.toArray());
-            ArrayNode arrayNode2 = new ObjectMapper().valueToTree(mentor.toArray());
-            response.putArray("interns").addAll(arrayNode1);
-            response.putArray("mentors").addAll(arrayNode2);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } else {
-            response.put("status", "bad_request");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            default:
+                response.put("status", "bad_request");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 

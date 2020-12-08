@@ -14,7 +14,7 @@ public class AccessData {
     @Column(name = "access_data_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    // email
+
     @Column(name = "email")
     private String email;
 
