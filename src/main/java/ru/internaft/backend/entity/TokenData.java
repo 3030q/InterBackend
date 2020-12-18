@@ -22,3 +22,4 @@ public class TokenData {
     @Column(name = "creation_timestamp")
     private Timestamp creationTimestamp;
 }
+    

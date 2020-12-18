@@ -14,12 +14,11 @@ public class MentorshipData {
     @Column(name = "mentorship_id")
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "mentorship_intern_id", referencedColumnName = "user_id")
     private UserData internId;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "mentorship_mentor_id", nullable = false)
     private UserData mentorId;
-
 }

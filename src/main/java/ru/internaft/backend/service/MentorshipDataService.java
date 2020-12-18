@@ -24,10 +24,12 @@ public class MentorshipDataService {
     private final MentorshipDataRepository mentorshipDataRepository;
     private final JsonNodeFactory jsonNodeFactory;
     private final UserDataService userDataService;
+    private final UtilityController utilityController;
 
-    public MentorshipDataService(MentorshipDataRepository mentorshipDataRepository, UserDataService userDataService) {
+    public MentorshipDataService(MentorshipDataRepository mentorshipDataRepository, UserDataService userDataService, UtilityController utilityController) {
         this.mentorshipDataRepository = mentorshipDataRepository;
         this.userDataService = userDataService;
+        this.utilityController = utilityController;
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
@@ -35,8 +37,8 @@ public class MentorshipDataService {
         ObjectNode response = jsonNodeFactory.objectNode();
         //defaultvalue = -1 потому что не нашел как null вставить, если найдешь варик зарефактори
         int interId = requestJson.path("intern").asInt(-1);
-        int idCurrentUser = new UtilityController(userDataService).getCurrentUserId();
-        UserData currentUser = userDataService.findById(idCurrentUser).get();
+        int idCurrentUser = utilityController.getCurrentUserId();
+        UserData currentUser = utilityController.getCurrentUser();
         if (!currentUser.getRole().equals("MENTOR")) {
             response.put("status", "access denied");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -53,7 +55,7 @@ public class MentorshipDataService {
     public ResponseEntity<JsonNode> deleteLink(JsonNode requestJson) {
         ObjectNode responce = jsonNodeFactory.objectNode();
         Integer internId = requestJson.path("intern").asInt(-1);
-        UserData currentUser = userDataService.findById(new UtilityController(userDataService).getCurrentUserId()).get();
+        UserData currentUser = utilityController.getCurrentUser();
         if (!currentUser.getRole().equals("ADMIN")) {
             responce.put("status", "access denied");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responce);
@@ -66,7 +68,7 @@ public class MentorshipDataService {
     public ResponseEntity<JsonNode> takeAllUsers(JsonNode requestJson) {
         ObjectNode response = jsonNodeFactory.objectNode();
         Integer userId = requestJson.path("user_id").asInt(-1);
-        UserData currentUser = userDataService.findById(new UtilityController(userDataService).getCurrentUserId()).get();
+        UserData currentUser = utilityController.getCurrentUser();
         if (currentUser.getRole().equals("INTERN")) {
             int mentorId = mentorshipDataRepository.findByInternId_Id(currentUser.getId()).getMentorId().getId();
             response.put("links", mentorId);
@@ -105,7 +107,7 @@ public class MentorshipDataService {
     }
 
     public ResponseEntity<JsonNode> internsWithoutMentor() {
-        UserData currentUser = userDataService.findById(new UtilityController(userDataService).getCurrentUserId()).get();
+        UserData currentUser = utilityController.getCurrentUser();
         ObjectNode response = jsonNodeFactory.objectNode();
         if (currentUser.getRole().equals("INTERN")) {
             response.put("status", "access denied");

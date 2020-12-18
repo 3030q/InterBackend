@@ -37,9 +37,10 @@ public class UserDataService {
         return usersDataRepository.findAllByRole(role);
     }
 
+
     public ResponseEntity<JsonNode> takeCurrentUserData(UserDataService userDataService) {
         UtilityController utilityController = new UtilityController(userDataService);
-        UserData userData = userDataService.findById(utilityController.getCurrentUserId()).get();
+        UserData userData = utilityController.getCurrentUser();
         ObjectNode response = jsonNodeFactory.objectNode();
         response.put("userId", userData.getId());
         response.put("email", userData.getEmail());
@@ -73,5 +74,29 @@ public class UserDataService {
             response.put("avatar_id", (Integer) null);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    public ResponseEntity<JsonNode> deleteUser(int userId, UtilityController utilityController){
+        ObjectNode response = jsonNodeFactory.objectNode();
+        UserData currentUser = utilityController.getCurrentUser();
+        if(currentUser.getRole().equals("ADMIN")){
+            Optional<UserData> userForDelete = usersDataRepository.findById(userId);
+            if(userForDelete.isPresent()){
+                try{
+                    usersDataRepository.deleteById(userId);
+                    response.put("status","alright");
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+                }catch (Exception e){
+                    response.put("status", String.valueOf(e));
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            }else{
+                response.put("status", "user for delete is not present");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        }else{
+            response.put("status", "access denied");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 }

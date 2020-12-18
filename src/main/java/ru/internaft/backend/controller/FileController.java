@@ -1,10 +1,10 @@
 package ru.internaft.backend.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.internaft.backend.service.FileDataService;
 
@@ -19,7 +19,18 @@ public class FileController {
     }
 
     @PostMapping("/uploadavatar")
-    public ResponseEntity<ObjectNode> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        return fileDataService.uploadFile(file);
+    public ResponseEntity<JsonNode> uploadAvatar(@RequestParam("file") MultipartFile file) throws IOException {
+        return fileDataService.uploadAvatar(file);
+    }
+
+    @PostMapping("/upload-document/{taskId}")
+    public ResponseEntity<JsonNode> uploadDocument(@PathVariable int taskId, MultipartFile file) throws IOException {
+        return fileDataService.uploadDocument(file,taskId);
+    }
+
+    @GetMapping(value = "/download-document/{fileId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public @ResponseBody
+    byte[] getImage(@PathVariable int fileId) throws IOException {
+        return fileDataService.getFile(fileId);
     }
 }

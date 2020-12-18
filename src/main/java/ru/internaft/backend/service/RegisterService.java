@@ -57,7 +57,6 @@ public class RegisterService {
         }
 
         UserData newUserData = new UserData();
-        //TODO: разобраться с добавлением и управлением ролями
         newUserData.setRole(accessDataService.findByEmail(login).getRole());
         newUserData.setEmail(login);
         newUserData.setFullName(fullName);

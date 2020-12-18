@@ -14,4 +14,6 @@ public interface UsersDataRepository extends JpaRepository<UserData, Integer> {
     Optional<UserData> findById(Integer id);
 
     List<UserData> findAllByRole(String role);
+
+    void deleteById(Integer id);
 }

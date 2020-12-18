@@ -2,6 +2,7 @@ package ru.internaft.backend.controller;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
+import ru.internaft.backend.entity.UserData;
 import ru.internaft.backend.service.UserDataService;
 
 //Класс для вспомогательных методов
@@ -22,6 +23,13 @@ public class UtilityController {
         return userDataService.findByEmail(loginCurrentUser).getId();
     }
 
+    public UserData getCurrentUser(){
+        String loginCurrentUser = (String) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        return userDataService.findByEmail(loginCurrentUser);
+    }
     //Возвращает Id текущего пользователя
 
 

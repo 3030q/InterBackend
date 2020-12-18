@@ -15,9 +15,15 @@ public class FileData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "file_name")
+    private String fileName;
     @Column(name = "file_path")
     private String path;
 
     @OneToOne(mappedBy = "avatarData")
     private UserData userData;
+
+    @ManyToOne
+    @JoinColumn(name = "task_id")
+    private TaskData task;
 }

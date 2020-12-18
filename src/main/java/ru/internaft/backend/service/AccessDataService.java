@@ -49,7 +49,7 @@ public class AccessDataService {
             response.put("status", "expected email, login and password");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        UserData userData = userDataService.findById(utilityController.getCurrentUserId()).get();
+        UserData userData = utilityController.getCurrentUser();
 
         AccessData accessDataRecord = accessDataRepository.findByEmail(email);
 

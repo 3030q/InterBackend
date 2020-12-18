@@ -32,15 +32,18 @@ public class DataController {
         return userDataService.takeCurrentUserData(userDataService);
     }
 
-    @GetMapping(value = "/avatarimage", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/avatarimage/{userId}", produces = MediaType.IMAGE_JPEG_VALUE)
     public @ResponseBody
-    byte[] getImage(@RequestBody JsonNode requestJson) throws IOException {
-        return fileDataService.getImage(requestJson);
+    byte[] getImage(@PathVariable int userId) throws IOException {
+        return fileDataService.getAvatar(userId);
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<JsonNode> takeUserData(@PathVariable int userId) {
         return userDataService.takeUserData(userDataService, userId);
     }
-
+    @PostMapping("/delete-user/{userId}")
+    public ResponseEntity<JsonNode> deleteUser(@PathVariable int userId){
+        return userDataService.deleteUser(userId, new UtilityController(userDataService));
+    }
 }
