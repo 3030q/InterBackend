@@ -7,5 +7,5 @@ import ru.internaft.backend.entity.ReviewData;
 import java.util.List;
 
 public interface ReviewsDataRepository extends JpaRepository<ReviewData, Integer> {
-    ReviewData[] findAllByTargetId_Id(int id);
+    List<ReviewData> findAllByTargetId_Id(int id);
 }

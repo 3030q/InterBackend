@@ -8,11 +8,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.internaft.backend.SpringAppCache.ReturnedDocument;
+import ru.internaft.backend.SpringAppCache.ReturnedScore;
 import ru.internaft.backend.controller.UtilityController;
-import ru.internaft.backend.entity.MentorshipData;
-import ru.internaft.backend.entity.ReviewData;
-import ru.internaft.backend.entity.TaskData;
-import ru.internaft.backend.entity.UserData;
+import ru.internaft.backend.entity.*;
+import ru.internaft.backend.repository.FileDataRepository;
 import ru.internaft.backend.repository.ReviewsDataRepository;
 import ru.internaft.backend.repository.TasksDataRepository;
 
@@ -29,15 +29,17 @@ public class TaskAndReviewDataService {
     private final JsonNodeFactory jsonNodeFactory;
     private final UtilityController utilityController;
     private final UserDataService userDataService;
+    private final FileDataRepository fileDataRepository;
 
     public TaskAndReviewDataService(ReviewsDataRepository reviewsDataRepository,
                                     TasksDataRepository tasksDataRepository,
                                     UtilityController utilityController,
-                                    UserDataService userDataService) {
+                                    UserDataService userDataService, FileDataRepository fileDataRepository) {
         this.reviewsDataRepository = reviewsDataRepository;
         this.tasksDataRepository = tasksDataRepository;
         this.utilityController = utilityController;
         this.userDataService = userDataService;
+        this.fileDataRepository = fileDataRepository;
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
@@ -84,6 +86,20 @@ public class TaskAndReviewDataService {
             response.put("status", presentTask.getStatus());
             response.put("task_description", presentTask.getTaskDescription());
             response.put("mentor_id", presentTask.getMentorId().getId());
+            List<FileData> fileForTask = fileDataRepository.findAllByTask_Id(presentTask.getId());
+            List<ReturnedDocument> result = new ArrayList<>();
+            List<ReturnedDocument> documents = new ArrayList<>();
+            for (FileData fileData : fileForTask) {
+                if (fileData.getType().equals("DOCUMENT")) {
+                    documents.add(new ReturnedDocument(fileData.getFileName(), fileData.getId()));
+                } else if (fileData.getType().equals("RESULT")) {
+                    result.add(new ReturnedDocument(fileData.getFileName(), fileData.getId()));
+                }
+            }
+            ArrayNode arrayNode = new ObjectMapper().valueToTree(result);
+            ArrayNode arrayNode2 = new ObjectMapper().valueToTree(documents);
+            response.putArray("result").addAll(arrayNode);
+            response.putArray("document").addAll(arrayNode2);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
         } else {
             response.put("status", "task is not present");
@@ -212,33 +228,33 @@ public class TaskAndReviewDataService {
         double totalScoreThird = 0;
         double totalScoreFourth = 0;
         double totalScoreFifth = 0;
-        ReviewData[] allReviewData = reviewsDataRepository.findAllByTargetId_Id(userId);
-        response.put("total_review", allReviewData.length);
-        for (int i = 0; i < allReviewData.length; i++) {
-            TaskData task = allReviewData[i].getTask();
-            totalScoreFirst += allReviewData[i].getScoreFirst();
-            totalScoreSecond += allReviewData[i].getScoreSecond();
-            totalScoreThird += allReviewData[i].getScoreThird();
-            totalScoreFourth += allReviewData[i].getScoreFourth();
-            totalScoreFifth += allReviewData[i].getScoreFifth();
-
-            response.putObject("review_" + (i + 1))
-                    .put("score_first", allReviewData[i].getScoreFirst())
-                    .put("score_second", allReviewData[i].getScoreSecond())
-                    .put("score_third", allReviewData[i].getScoreThird())
-                    .put("score_fourth", allReviewData[i].getScoreFourth())
-                    .put("score_fifth", allReviewData[i].getScoreFifth())
-                    .putObject("task").put("task_id", task.getId())
-                    .put("creation_date", task.getCreationDate().toString())
-                    .put("deadline_date", task.getDeadlineDate().toString())
-                    .put("task_description", task.getTaskDescription());
-
+        List<ReviewData> allReviewData = reviewsDataRepository.findAllByTargetId_Id(userId);
+        List<ReturnedScore> returnedScores = new ArrayList<>();
+        int amountReview = allReviewData.size();
+        response.put("total_review", allReviewData.size());
+        for (ReviewData allReviewDatum : allReviewData) {
+            TaskData task = allReviewDatum.getTask();
+            totalScoreFirst += allReviewDatum.getScoreFirst();
+            totalScoreSecond += allReviewDatum.getScoreSecond();
+            totalScoreThird += allReviewDatum.getScoreThird();
+            totalScoreFourth += allReviewDatum.getScoreFourth();
+            totalScoreFifth += allReviewDatum.getScoreFifth();
+            returnedScores.add(new ReturnedScore(allReviewDatum.getScoreFirst(),
+                    allReviewDatum.getScoreSecond(),
+                    allReviewDatum.getScoreThird(),
+                    allReviewDatum.getScoreFourth(),
+                    allReviewDatum.getScoreFifth(), task.getId(),
+                    task.getCreationDate().toString(),
+                    task.getDeadlineDate().toString(),
+                    task.getTaskDescription()));
         }
-        totalScoreFirst /= allReviewData.length;
-        totalScoreSecond /= allReviewData.length;
-        totalScoreThird /= allReviewData.length;
-        totalScoreFourth /= allReviewData.length;
-        totalScoreFifth /= allReviewData.length;
+        ArrayNode arrayNode = new ObjectMapper().valueToTree(returnedScores);
+        response.putArray("all_reviews").addAll(arrayNode);
+        totalScoreFirst /= amountReview;
+        totalScoreSecond /= amountReview;
+        totalScoreThird /= amountReview;
+        totalScoreFourth /= amountReview;
+        totalScoreFifth /= amountReview;
         response.putObject("total_score")
                 .put("total_score_first", totalScoreFirst)
                 .put("total_score_second", totalScoreSecond)

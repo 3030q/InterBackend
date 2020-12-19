@@ -17,8 +17,12 @@ public class FileData {
 
     @Column(name = "file_name")
     private String fileName;
+
     @Column(name = "file_path")
     private String path;
+
+    @Column(name = "type")
+    private String type;
 
     @OneToOne(mappedBy = "avatarData")
     private UserData userData;

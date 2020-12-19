@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.internaft.backend.entity.FileData;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,4 +14,6 @@ public interface FileDataRepository extends JpaRepository<FileData, Integer> {
     FileData findByPath(String string);
 
     void deleteById(Integer id);
+
+    List<FileData> findAllByTask_Id(Integer id);
 }

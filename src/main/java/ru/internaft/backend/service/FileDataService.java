@@ -21,6 +21,7 @@ import ru.internaft.backend.repository.TasksDataRepository;
 import ru.internaft.backend.repository.UsersDataRepository;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -81,6 +82,80 @@ public class FileDataService {
         fileData.setPath(shortPath);
         fileData.setFileName(file.getOriginalFilename());
         fileData.setTask(task);
+        fileData.setType("DOCUMENT");
+        fileDataRepository.saveAndFlush(fileData);
+        response.put("status", "alright");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    //TODO:Вынести в метод remove and upload
+    public ResponseEntity<JsonNode> removeDocument(int fileId) throws IOException {
+        ObjectNode response = jsonNodeFactory.objectNode();
+        Optional<FileData> fileData = fileDataRepository.findById(fileId);
+        if(!fileData.isPresent()){
+            response.put("status", "file is not present");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        FileData file = fileData.get();
+        if(!utilityController.getCurrentUserId().equals(file.getTask().getMentorId().getId())){
+            response.put("status","access denied");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        Files.deleteIfExists(Paths.get(uploadDir + File.separator + file.getPath()));
+        fileDataRepository.deleteById(fileId);
+        response.put("status","alright");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
+    public ResponseEntity<JsonNode> removeResult(int fileId) throws IOException {
+        ObjectNode response = jsonNodeFactory.objectNode();
+        Optional<FileData> fileData = fileDataRepository.findById(fileId);
+        if(!fileData.isPresent()){
+            response.put("status", "file is not present");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        FileData file = fileData.get();
+        if(!utilityController.getCurrentUserId().equals(file.getTask().getInternId().getId())){
+            response.put("status","access denied");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        Files.deleteIfExists(Paths.get(uploadDir + File.separator + file.getPath()));
+        fileDataRepository.deleteById(fileId);
+        response.put("status","alright");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
+
+
+    public ResponseEntity<JsonNode> uploadResult(MultipartFile file, int taskId) throws IOException {
+        ObjectNode response = jsonNodeFactory.objectNode();
+        Optional<TaskData> taskData = tasksDataRepository.findById(taskId);
+        if (!taskData.isPresent()) {
+            response.put("status", "task is not present");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        TaskData task = taskData.get();
+        int id = utilityController.getCurrentUserId();
+        if (task.getInternId().getId() != id) {
+            response.put("status", "access denied");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        String path = uploadDir + File.separator + id
+                + StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        //Так как spring не видит вне resource добавим короткий путь и будем его класть в бд
+        //TODO:обсудить это
+        String shortPath = id + StringUtils.cleanPath(file.getOriginalFilename());
+        Path copyLocation = Paths.get(path);
+        try {
+            Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //TODO: подумать как лучше айдишник вытаскивать
+        //Да! ГОвНо код и что ты мне сделаешь
+        FileData fileData = new FileData();
+        fileData.setPath(shortPath);
+        fileData.setFileName(file.getOriginalFilename());
+        fileData.setTask(task);
+        fileData.setType("RESULT");
         fileDataRepository.saveAndFlush(fileData);
         response.put("status", "alright");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -112,6 +187,7 @@ public class FileDataService {
             FileData fileData = new FileData();
             fileData.setPath(shortPath);
             fileData.setFileName(file.getOriginalFilename());
+            fileData.setType("AVATAR");
             fileDataRepository.saveAndFlush(fileData);
             userData.setAvatarData((fileDataRepository.findByPath(shortPath)));
             usersDataRepository.saveAndFlush(userData);
@@ -136,7 +212,7 @@ public class FileDataService {
         if(!fileData.isPresent()){
             return null;
         }
-        InputStream in = getClass().getResourceAsStream("/file/" + fileData.get().getPath());
+        InputStream in = new FileInputStream(uploadDir+File.separator+fileDataRepository.findById(fileId).get().getPath());
         return IOUtils.toByteArray(in);
     }
 }
