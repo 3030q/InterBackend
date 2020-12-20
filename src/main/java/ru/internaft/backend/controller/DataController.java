@@ -27,6 +27,10 @@ public class DataController {
         this.jsonNodeFactory = new ObjectMapper().getNodeFactory();
     }
 
+    @GetMapping("/")
+    public String hello(){
+        return "hello";
+    }
     @GetMapping("/user")
     public ResponseEntity<JsonNode> takeCurrentUserData() {
         return userDataService.takeCurrentUserData(userDataService);
